@@ -1,8 +1,10 @@
 package Model;
 
-public class User {
-    private int userID;
-    private String username;
+public abstract class User {
+    protected int userID; 
+    protected String username;
+    protected String password;
+    protected String role; // Is it a supervisor, waiter or a customer?
 
     public User(int userID, String username) {
         this.userID = userID;
