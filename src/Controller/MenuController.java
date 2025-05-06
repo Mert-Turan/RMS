@@ -36,21 +36,19 @@ public class MenuController extends Controller {
             // Yeni bir Order nesnesi oluşturuluyor
             Order order = new Order(0, 0, selectedMenu.getMenuID(), "Pending");
 
-            // Veritabanında booking bilgilerini güncelle
-            boolean isUpdated = model.updateMenuForBooking(order.getBookingID(), order.getMenuID(), connection);
+            // OrderController kullanılarak sipariş veritabanına ekleniyor
+            OrderController orderController = new OrderController(connection);
+            boolean isAdded = orderController.addOrder(order);
 
-            if (isUpdated) {
-                // Sipariş bilgilerini konsola yazdır
-                System.out.println("Order created: Menu ID = " + order.getMenuID() + ", Status = " + order.getStatus());
-
-                // Kullanıcıya siparişin başarıyla oluşturulduğunu bildir
+            if (isAdded) {
+                System.out.println("Order added to database: Menu ID = " + order.getMenuID() + ", Status = " + order.getStatus());
                 JOptionPane.showMessageDialog(((MenuView) view).getFrame(),
                         "Order placed for: " + selectedMenu.getName(),
                         "Order Success",
                         JOptionPane.INFORMATION_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(((MenuView) view).getFrame(),
-                        "Failed to update booking information.",
+                        "Failed to add order to database.",
                         "Error",
                         JOptionPane.ERROR_MESSAGE);
             }

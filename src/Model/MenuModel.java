@@ -63,6 +63,18 @@ public class MenuModel {
             return false;
         }
     }
+    public boolean addOrderToDatabase(Order order, Connection connection) {
+        String query = "INSERT INTO orders (booking_id, menu_id, status) VALUES (?, ?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, order.getBookingID());
+            stmt.setInt(2, order.getMenuID());
+            stmt.setString(3, order.getStatus());
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
 
 
