@@ -1,9 +1,7 @@
 package Model;
 
 public class Customer extends User {
-    public Customer(int userID, String username) {
-        super(userID, username);
+    public Customer(String password, String username) {
+        super(password, username);
     }
-
-
 }

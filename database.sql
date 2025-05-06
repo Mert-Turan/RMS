@@ -3,27 +3,31 @@ USE restaurant_management;
 
 CREATE TABLE Users (
     userID INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) UNIQUE NOT NULL
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(50) UNIQUE NOT NULL
 );
 
-
 CREATE TABLE Customers (
-    customerID INT PRIMARY KEY AUTO_INCREMENT,
-    bookingID INT,
-    FOREIGN KEY (customerID) REFERENCES Users(userID),
-    FOREIGN KEY (bookingID) REFERENCES Bookings(bookingID)
+    customerID INT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    password VARCHAR(50) NOT NULL,
+    FOREIGN KEY (customerID) REFERENCES Users(userID)
 );
 
 CREATE TABLE Waiters (
-    waiterID INT PRIMARY KEY AUTO_INCREMENT,
+    waiterID INT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    password VARCHAR(50) NOT NULL,
     FOREIGN KEY (waiterID) REFERENCES Users(userID)
 );
 
 CREATE TABLE Supervisors (
     supervisorID INT PRIMARY KEY,
-    FOREIGN KEY (supervisorID) REFERENCES Users(userID) ON DELETE CASCADE ON UPDATE CASCADE
+    username VARCHAR(50) NOT NULL,
+    password VARCHAR(50) NOT NULL,
+    FOREIGN KEY (supervisorID) REFERENCES Users(userID)
+        ON DELETE CASCADE ON UPDATE CASCADE
 );
-
 
 CREATE TABLE Tables (
     tableID INT AUTO_INCREMENT PRIMARY KEY,
@@ -71,6 +75,7 @@ CREATE TABLE Orders (
 );
 
 -- Rezervasyon yapildiginda rezerve edilen masanin o zaman dilimi dolu olarak guncellenir
+DELIMITER $$
 CREATE TRIGGER trg_reserve_slot
 AFTER INSERT ON Bookings
 FOR EACH ROW
@@ -78,11 +83,12 @@ BEGIN
     UPDATE TableSlots
     SET isAvailable = FALSE
     WHERE slotID = NEW.slotID;
-END;
+END$$
+DELIMITER ;
 
 -- masa müsait değilse customer rezerve edemesin
-DELIMITER $$
 
+DELIMITER $$
 CREATE TRIGGER trg_prevent_booking_unavailable_slot
 BEFORE INSERT ON Bookings
 FOR EACH ROW
@@ -92,7 +98,6 @@ BEGIN
         SET MESSAGE_TEXT = 'This time slot is not available for reservation.';
     END IF;
 END$$
-
 DELIMITER ;
 
 

@@ -1,7 +1,7 @@
 package Model;
 
 public class Waiter extends User {
-    public Waiter(int userID, String username) {
-        super(userID, username);
+    public Waiter(String password, String username) {
+        super(password, username);
     }
 }
