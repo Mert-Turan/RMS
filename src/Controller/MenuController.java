@@ -1,6 +1,7 @@
 package Controller;
 
 import Model.MenuModel;
+import Model.Order;
 import View.MenuView;
 
 import javax.swing.*;
@@ -31,8 +32,33 @@ public class MenuController extends Controller {
         List<MenuModel> menus = model.getMenus(connection);
         if (menuIndex >= 0 && menuIndex < menus.size()) {
             MenuModel selectedMenu = menus.get(menuIndex);
-            System.out.println("Order placed for: " + selectedMenu.getName());
-            JOptionPane.showMessageDialog(((MenuView) view).getFrame(), "Order placed for: " + selectedMenu.getName(), "Order Success", JOptionPane.INFORMATION_MESSAGE);
+
+            // Yeni bir Order nesnesi oluşturuluyor
+            Order order = new Order(0, 0, selectedMenu.getMenuID(), "Pending");
+
+            // Veritabanında booking bilgilerini güncelle
+            boolean isUpdated = model.updateMenuForBooking(order.getBookingID(), order.getMenuID(), connection);
+
+            if (isUpdated) {
+                // Sipariş bilgilerini konsola yazdır
+                System.out.println("Order created: Menu ID = " + order.getMenuID() + ", Status = " + order.getStatus());
+
+                // Kullanıcıya siparişin başarıyla oluşturulduğunu bildir
+                JOptionPane.showMessageDialog(((MenuView) view).getFrame(),
+                        "Order placed for: " + selectedMenu.getName(),
+                        "Order Success",
+                        JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(((MenuView) view).getFrame(),
+                        "Failed to update booking information.",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(((MenuView) view).getFrame(),
+                    "Invalid menu selection.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 }
