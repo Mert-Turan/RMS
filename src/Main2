@@ -1,0 +1,25 @@
+import Controller.ReservationController;
+import Model.DBConnection;
+import Model.ReservationModel;
+import View.ReservationView;
+
+import java.sql.Connection;
+
+public class Main {
+    public static void main(String[] args) {
+        try {
+
+
+
+
+            Connection conn = DBConnection.getConnection();
+
+
+            ReservationModel reservationModel= new ReservationModel() ;
+            new ReservationController(new ReservationView(), conn,reservationModel);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
