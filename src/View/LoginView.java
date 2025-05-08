@@ -2,7 +2,9 @@ package View;
 
 import Controller.Controller;
 import Controller.LoginController;
+
 import Model.User;
+
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,6 +20,9 @@ public class LoginView extends View implements ViewInterface {
     private JLabel titleLabel;
     private final JPanel mainPanel;
     private final CardLayout cardLayout;
+    private JPasswordField passwordField;
+
+
 
     private final java.util.Map<String, JLabel> statusLabels = new java.util.HashMap<>();
     private String currentRoleKey = ""; // stores "customer", "waiter", "supervisor"
@@ -30,6 +35,8 @@ public class LoginView extends View implements ViewInterface {
 
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
+
+
 
         setupInitialScreen();
         createLoginScreen("customer", "customer");
@@ -117,7 +124,7 @@ public class LoginView extends View implements ViewInterface {
 
             JLabel passwordLabel = new JLabel("Password:");
             passwordLabel.setForeground(Color.WHITE);
-            JPasswordField passwordField = new JPasswordField(15);
+            passwordField = new JPasswordField(15);
 
             JButton loginButton = new JButton("Login");
             JButton backButton = new JButton("⇐"); // Unicode arrow (or use "<=")
@@ -173,6 +180,8 @@ public class LoginView extends View implements ViewInterface {
             loginButton.addActionListener(e -> {
                 userId = nameField.getText();
                 password = new String(passwordField.getPassword());
+                //reservationView.show();
+
                 if (controller != null) {
                     controller.handleLogin(userId, password, roleKey);
                 }
@@ -185,6 +194,10 @@ public class LoginView extends View implements ViewInterface {
                     loginController.handleSignUp(userId, password, roleKey);
                 }
             });
+
+
+
+
 
             backButton.addActionListener(e -> {
                 currentRoleKey = ""; // reset to avoid null label lookup
@@ -211,6 +224,10 @@ public class LoginView extends View implements ViewInterface {
         }
     }
 
+    public String getPassword() {
+        return new String(passwordField.getPassword());
+    }
+
     @Override
     public void setUser(User user) {
         this.currentUser = user;
@@ -231,3 +248,7 @@ public class LoginView extends View implements ViewInterface {
         return "LoginView";
     }
 }
+
+
+
+

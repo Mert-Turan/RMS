@@ -3,6 +3,7 @@ package View;
 import Controller.Controller;
 import Controller.MenuController;
 import Model.MenuModel;
+import Model.User;
 
 import javax.swing.*;
 import java.awt.*;
@@ -100,4 +101,12 @@ public class MenuView extends View implements MenuViewInterface {
     public JFrame getFrame() {
         return frame;
     }
+
+    @Override
+    public void setUser(User user) {
+        // If you're not using user data, this can stay empty
+        // Or you can store it like:
+        // this.user = user;
+    }
+
 }
