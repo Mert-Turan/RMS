@@ -9,6 +9,8 @@ public class ReservationView extends View {
     private JFrame frame;
     private JComboBox<String> tableSlotComboBox;
     private JButton reserveButton;
+    private JButton viewReservationsButton;
+
 
     public ReservationView() {
         super("Make Reservation");
@@ -21,12 +23,17 @@ public class ReservationView extends View {
         JPanel panel = new JPanel(new GridLayout(2, 1));
         tableSlotComboBox = new JComboBox<>();
         reserveButton = new JButton("Reserve");
+        viewReservationsButton = new JButton("View My Reservations");
 
         panel.add(new JLabel("Select Table & Time Slot:"));
         panel.add(tableSlotComboBox);
 
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(reserveButton);
+        buttonPanel.add(viewReservationsButton);
+        frame.add(buttonPanel, BorderLayout.SOUTH);
         frame.add(panel, BorderLayout.CENTER);
-        frame.add(reserveButton, BorderLayout.SOUTH);
+
     }
 
     public JComboBox<String> getTableSlotComboBox() {
@@ -46,8 +53,11 @@ public class ReservationView extends View {
 
     @Override
     public void updateView(Object data) {
-        // Optionally update view based on model data
+        if (data instanceof String) {
+            JOptionPane.showMessageDialog(frame, (String) data);
+        }
     }
+
 
     @Override
     public void reset() {
@@ -64,5 +74,10 @@ public class ReservationView extends View {
         // Or you can store it like:
         // this.user = user;
     }
+
+    public JButton getViewReservationsButton() {
+        return viewReservationsButton;
+    }
+
 
 }
