@@ -1,6 +1,35 @@
 CREATE DATABASE restaurant_management;
 USE restaurant_management;
 
+
+
+
+CREATE TABLE Users (
+    userID INT AUTO_INCREMENT PRIMARY KEY,
+    password INT UNIQUE NOT NULL ,
+    username VARCHAR(50) UNIQUE NOT NULL
+);
+
+CREATE TABLE Customers (
+    customerID INT PRIMARY KEY,
+    bookingID INT,
+    FOREIGN KEY (customerID) REFERENCES Users(userID),
+    FOREIGN KEY (bookingID) REFERENCES Bookings(bookingID)
+);
+
+CREATE TABLE Waiters (
+    waiterID INT PRIMARY KEY ,
+    FOREIGN KEY (waiterID) REFERENCES Users(userID)
+);
+
+CREATE TABLE Supervisors (
+    supervisorID INT PRIMARY KEY,
+    FOREIGN KEY (supervisorID) REFERENCES Users(userID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+
+
 CREATE TABLE Users (
     userID INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
