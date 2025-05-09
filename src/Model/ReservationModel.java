@@ -45,7 +45,7 @@ public class ReservationModel {
 
 
     public boolean makeReservation(String password, int slotID, Connection conn) {
-        String sql = "INSERT INTO Bookings (customerID, slotID) VALUES (?, ?)";
+        String sql = "INSERT INTO Reservation (customerID, slotID) VALUES (?, ?)";
 
         try {
 
@@ -101,7 +101,7 @@ public class ReservationModel {
 
         String sql = """
         SELECT
-            bookingID,
+            reservationID,
             (SELECT tableName FROM Tables WHERE tableID = (
                 SELECT tableID FROM TableSlots WHERE slotID = b.slotID
             )) AS tableName,
@@ -110,7 +110,7 @@ public class ReservationModel {
             paymentAmount,
             isPaid,
             status
-        FROM Bookings b
+        FROM Reservation b
         WHERE customerID = ?
     """;
 
@@ -119,7 +119,7 @@ public class ReservationModel {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 String[] row = new String[7];
-                row[0] = String.valueOf(rs.getInt("bookingID"));
+                row[0] = String.valueOf(rs.getInt("reservationID"));
                 row[1] = rs.getString("tableName");
                 row[2] = rs.getString("slotType");
                 row[3] = rs.getString("menuName");

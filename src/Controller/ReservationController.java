@@ -95,7 +95,7 @@ public class ReservationController extends Controller {
 
                 StringBuilder message = new StringBuilder("Your Reservations:\n\n");
                 for (String[] row : reservations) {
-                    message.append("Booking ID: ").append(row[0])
+                    message.append("Reservation ID: ").append(row[0])
                             .append("\nTable: ").append(row[1])
                             .append("\nTime: ").append(row[2])
                             .append("\nMenu: ").append(row[3])
