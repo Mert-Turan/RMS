@@ -1,20 +1,15 @@
 CREATE DATABASE restaurant_management;
 USE restaurant_management;
 
-
-
-
 CREATE TABLE Users (
     userID INT AUTO_INCREMENT PRIMARY KEY,
-    password INT UNIQUE NOT NULL ,
+    password VARCHAR(50) UNIQUE NOT NULL,
     username VARCHAR(50) UNIQUE NOT NULL
 );
 
 CREATE TABLE Customers (
     customerID INT PRIMARY KEY,
-    reservationID INT,
-    FOREIGN KEY (customerID) REFERENCES Users(userID),
-    FOREIGN KEY (reservationID) REFERENCES Reservation(reservationID)
+    FOREIGN KEY (customerID) REFERENCES Users(userID)
 );
 
 CREATE TABLE Waiters (
@@ -27,36 +22,6 @@ CREATE TABLE Supervisors (
     FOREIGN KEY (supervisorID) REFERENCES Users(userID) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-
-
-
-CREATE TABLE Users (
-    userID INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) UNIQUE NOT NULL,
-    password VARCHAR(50) UNIQUE NOT NULL
-);
-
-CREATE TABLE Customers (
-    customerID INT PRIMARY KEY,
-    username VARCHAR(50) NOT NULL,
-    password VARCHAR(50) NOT NULL,
-    FOREIGN KEY (customerID) REFERENCES Users(userID)
-);
-
-CREATE TABLE Waiters (
-    waiterID INT PRIMARY KEY,
-    username VARCHAR(50) NOT NULL,
-    password VARCHAR(50) NOT NULL,
-    FOREIGN KEY (waiterID) REFERENCES Users(userID)
-);
-
-CREATE TABLE Supervisors (
-    supervisorID INT PRIMARY KEY,
-    username VARCHAR(50) NOT NULL,
-    password VARCHAR(50) NOT NULL,
-    FOREIGN KEY (supervisorID) REFERENCES Users(userID)
-        ON DELETE CASCADE ON UPDATE CASCADE
-);
 
 CREATE TABLE Tables (
     tableID INT AUTO_INCREMENT PRIMARY KEY,
@@ -265,54 +230,3 @@ DELIMITER ;
 UPDATE Orders SET status = 'preparing' WHERE orderID = ?;
 UPDATE Orders SET status = 'ready' WHERE orderID = ?;
 UPDATE Orders SET status = 'delivered' WHERE orderID = ?;
-
--- Use the correct database
-USE restaurant_management;
-
--- Insert Users (base for all roles)
-INSERT INTO Users (username, password) VALUES ('customer1', 'pass123');
-INSERT INTO Users (username, password) VALUES ('customer2', 'pass456');
-INSERT INTO Users (username, password) VALUES ('waiter1', 'waiterpass');
-INSERT INTO Users (username, password) VALUES ('supervisor1', 'superpass');
-
--- Insert into Customers (userID 1 and 2 assumed for customer1 and customer2)
-INSERT INTO Customers (customerID, username, password)
-VALUES (1, 'customer1', 'pass123');
-
-INSERT INTO Customers (customerID, username, password)
-VALUES (2, 'customer2', 'pass456');
-
--- Insert into Waiters (userID 3 assumed for waiter1)
-INSERT INTO Waiters (waiterID, username, password)
-VALUES (3, 'waiter1', 'waiterpass');
-
--- Insert into Supervisors (userID 4 assumed for supervisor1)
-INSERT INTO Supervisors (supervisorID, username, password)
-VALUES (4, 'supervisor1', 'superpass');
-
--- Insert Tables
-INSERT INTO Tables (tableName, capacity, view)
-VALUES ('T1', 4, 'sea view');
-
-INSERT INTO Tables (tableName, capacity, view)
-VALUES ('T2', 2, 'garden view');
-
--- Insert TableSlots
-INSERT INTO TableSlots (tableID, slotType)
-VALUES (1, 'morning');
-
-INSERT INTO TableSlots (tableID, slotType)
-VALUES (1, 'afternoon');
-
-INSERT INTO TableSlots (tableID, slotType)
-VALUES (2, 'evening');
-
--- Insert Menu Items
-INSERT INTO Menu (name, price)
-VALUES ('Pasta', 12.99);
-
-INSERT INTO Menu (name, price)
-VALUES ('Steak', 25.50);
-
-INSERT INTO Menu (name, price)
-VALUES ('Salad', 8.75);
