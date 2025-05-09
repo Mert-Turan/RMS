@@ -34,12 +34,14 @@ public class MenuController extends Controller {
             MenuModel selectedMenu = menus.get(menuIndex);
 
             // Yeni bir Order nesnesi oluşturuluyor
-            Order order = new Order(0, 0, selectedMenu.getMenuID(), "Pending");
+            Order order = new Order(0, 0, selectedMenu.getMenuID(), "ordered"); //ordered in database?
+            //0 for orderID, 0 for reservationID, 
+            //database will auto increment orderID, reservationID
 
             // OrderController kullanılarak sipariş veritabanına ekleniyor
             OrderController orderController = new OrderController(connection);
-            boolean isAdded = orderController.addOrder(order);
-
+            boolean isAdded = orderController.addOrder(order,connection); //2 input
+            //Check if the order was added successfully
             if (isAdded) {
                 System.out.println("Order added to database: Menu ID = " + order.getMenuID() + ", Status = " + order.getStatus());
                 JOptionPane.showMessageDialog(((MenuView) view).getFrame(),
