@@ -245,10 +245,10 @@ END$$
 
 DELIMITER ;
 
--- customer table ve menü seçip booking oluşturduktan sonra order oluşur
+-- customer table ve menü seçip reservation oluşturduktan sonra order oluşur
 DELIMITER $$
 
-CREATE TRIGGER trg_create_order_after_booking
+CREATE TRIGGER trg_create_order_after_reservation
 AFTER INSERT ON Reservation
 FOR EACH ROW
 BEGIN
