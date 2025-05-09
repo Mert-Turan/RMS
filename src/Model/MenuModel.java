@@ -43,8 +43,8 @@ public class MenuModel {
 
 
 
-    //after customer choosing menu update booking infos
-    public boolean updateMenuForBooking(int reservationID, int menuID, Connection conn) {
+    //after customer choosing menu update reservation infos
+    public boolean updateMenuForReservation(int reservationID, int menuID, Connection conn) {
         String sql = """
         UPDATE Reservation
         SET menuID = ?,
