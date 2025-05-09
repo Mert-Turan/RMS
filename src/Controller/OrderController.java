@@ -1,34 +1,39 @@
 package Controller;
 
 import Model.Order;
+import Model.OrderModel;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.util.List;
 
 public class OrderController extends Controller {
     private final Connection connection;
+    private final OrderModel orderModel;
 
     public OrderController(Connection connection) {
-        super(null); // OrderController bir view ile ilişkilendirilmediği için null geçiyoruz
+        super(null);
         this.connection = connection;
+        this.orderModel = new OrderModel();
     }
 
     public boolean addOrder(Order order) {
-        String query = "INSERT INTO Orders (reservationID, menuID, status) VALUES (?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, order.getReservationID());
-            stmt.setInt(2, order.getMenuID());
-            stmt.setString(3, order.getStatus());
-            return stmt.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
+        return orderModel.addOrder(order, connection);
+    }
+
+    public List<Order> getOrdersByUser(int userID) {
+        return orderModel.getOrdersByUser(userID, connection);
+    }
+
+    public List<Order> getAllOrders() {
+        return orderModel.getAllOrders(connection);
+    }
+
+    public boolean updateOrderStatus(int orderID, String newStatus) {
+        return orderModel.updateOrderStatus(orderID, newStatus, connection);
     }
 
     @Override
     public void handleLogin(String username, String password, String role) {
-        throw new UnsupportedOperationException("handleLogin is not supported in OrderController");
+        throw new UnsupportedOperationException("Login is not supported in OrderController");
     }
 }
