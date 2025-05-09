@@ -44,18 +44,18 @@ public class MenuModel {
 
 
     //after customer choosing menu update booking infos
-    public boolean updateMenuForBooking(int bookingID, int menuID, Connection conn) {
+    public boolean updateMenuForBooking(int reservationID, int menuID, Connection conn) {
         String sql = """
-        UPDATE Bookings
-        SET menuID = ?, 
+        UPDATE Reservation
+        SET menuID = ?,
             paymentAmount = (SELECT price FROM Menu WHERE menuID = ?)
-        WHERE bookingID = ?
+        WHERE reservationID = ?
     """;
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, menuID);
             stmt.setInt(2, menuID);
-            stmt.setInt(3, bookingID);
+            stmt.setInt(3,reservationID);
             stmt.executeUpdate();
             return true;
         } catch (SQLException e) {
@@ -64,9 +64,9 @@ public class MenuModel {
         }
     }
     public boolean addOrderToDatabase(Order order, Connection connection) {
-        String query = "INSERT INTO orders (booking_id, menu_id, status) VALUES (?, ?, ?)";
+        String query = "INSERT INTO Orders (reservationID, menuID, status) VALUES (?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, order.getBookingID());
+            stmt.setInt(1, order.getReservationID());
             stmt.setInt(2, order.getMenuID());
             stmt.setString(3, order.getStatus());
             return stmt.executeUpdate() > 0;

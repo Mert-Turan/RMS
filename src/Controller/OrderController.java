@@ -15,9 +15,9 @@ public class OrderController extends Controller {
     }
 
     public boolean addOrder(Order order) {
-        String query = "INSERT INTO orders (booking_id, menu_id, status) VALUES (?, ?, ?)";
+        String query = "INSERT INTO Orders (reservationID, menuID, status) VALUES (?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, order.getBookingID());
+            stmt.setInt(1, order.getReservationID());
             stmt.setInt(2, order.getMenuID());
             stmt.setString(3, order.getStatus());
             return stmt.executeUpdate() > 0;
