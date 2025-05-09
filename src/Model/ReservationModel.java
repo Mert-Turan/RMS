@@ -76,7 +76,7 @@ public class ReservationModel {
     private int findUserIDByPassword(String password, Connection conn) {
         String query = "SELECT userID FROM Users WHERE password = ?";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, Integer.parseInt(password));
+            stmt.setString(1, password);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return rs.getInt("userID");
