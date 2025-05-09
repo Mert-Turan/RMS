@@ -16,13 +16,17 @@ public class ReservationController extends Controller {
     private final Connection conn;
     private final ReservationModel model;
     private LoginView loginView;
+    private ReservationView reservationView;
 
-    public ReservationController(ReservationView reservationView, Connection conn, LoginView loginView) {
+
+    public ReservationController(ReservationView reservationView, Connection conn,  ReservationModel model) {
         super(reservationView);
         this.conn = conn;
         this.model = new ReservationModel();
         this.setUser(user);
-        this.loginView = loginView;  // ✅ You must pass it from outside
+        this.reservationView = reservationView;
+        setupView();
+
 
 
 
@@ -42,6 +46,12 @@ public class ReservationController extends Controller {
         }
 
         rv.show();
+
+        System.out.println("Slot List:");
+        for (String[] row : model.getTableDetails(conn)) {
+            System.out.println(String.join(" | ", row));
+        }
+
     }
 
     private void addListeners() {
@@ -56,15 +66,46 @@ public class ReservationController extends Controller {
                 }
 
                 int slotID = Integer.parseInt(selected.split("SlotID: ")[1].split(" ")[0]);
-                int customerID = loginView.getUserID();
+                //String customerPassword= loginView.Password();
+                String customerPassword = "1";
 
-                boolean success = model.makeReservation(customerID, slotID, conn);
+                boolean success = model.makeReservation(customerPassword, slotID, conn);
                 if (success) {
                     view.updateView("Reservation successful!");
                     //rv.setVisible(false);
                 } else {
                     view.updateView("Reservation failed. Slot may not be available.");
                 }
+            }
+        });
+
+
+
+        ((ReservationView) view).getViewReservationsButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //String customerPassword= loginView.Password(); after login connection this will be used to get password
+                String password = "1";
+
+                List<String[]> reservations = model.viewMyReservations(password, conn);
+                if (reservations.isEmpty()) {
+                    view.updateView("No reservations found.");
+                    return;
+                }
+
+                StringBuilder message = new StringBuilder("Your Reservations:\n\n");
+                for (String[] row : reservations) {
+                    message.append("Booking ID: ").append(row[0])
+                            .append("\nTable: ").append(row[1])
+                            .append("\nTime: ").append(row[2])
+                            .append("\nMenu: ").append(row[3])
+                            .append("\nAmount: ").append(row[4])
+                            .append("\nPaid: ").append(row[5])
+                            .append("\nStatus: ").append(row[6])
+                            .append("\n\n");
+                }
+
+                JOptionPane.showMessageDialog(null, message.toString(), "Your Reservations", JOptionPane.INFORMATION_MESSAGE);
             }
         });
     }
@@ -75,4 +116,19 @@ public class ReservationController extends Controller {
     }
 
 
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
