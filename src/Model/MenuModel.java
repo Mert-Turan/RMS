@@ -76,7 +76,25 @@ public class MenuModel {
         }
     }
 
+    //helper function for generating orderID according to the database
+    public int getLastOrderIDFromDatabase(Connection connection) {
+        int lastOrderID = 0;
+        // if the table is empty, return 0
+        String query = "SELECT MAX(orderID) AS lastOrderID FROM Orders";
+        // if not take the lasst orderID, 
+        //increment it by 1 for new orderID at generating the object Order
+        try (PreparedStatement stmt = connection.prepareStatement(query);
+            ResultSet resultSet = stmt.executeQuery()) {
 
+            if (resultSet.next()) {
+            lastOrderID = resultSet.getInt("lastOrderID");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error fetching last order ID: " + e.getMessage());
+        }
+        return lastOrderID;
+    }
 
 
     public int getMenuID() {
