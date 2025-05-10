@@ -16,8 +16,10 @@ public class MenuView extends View implements ViewInterface {
     private final CardLayout cardLayout;
     private final DefaultListModel<String> menuListModel;
     private JList<String> menuList;
+    private final int restaurantID;
 
     public MenuView(int reservationID) {
+        this.reservationID = reservationID;
         frame = new JFrame("Menu Management");
         frame.setSize(600, 400);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -92,6 +94,9 @@ public class MenuView extends View implements ViewInterface {
         }
     }
 
+    public int getReservationID() {
+    return reservationID;
+    }
     @Override
     public void setController(Controller controller) {
         this.controller = controller;
