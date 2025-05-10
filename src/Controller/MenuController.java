@@ -16,8 +16,52 @@ public class MenuController extends Controller {
         super(view); // Controller sınıfının constructor'ına view nesnesini gönderiyoruz
         this.model = model;
         this.connection = connection;
+        view.setController(this); 
     }
+     @Override
+    public void actionPerformed(ActionEvent e) {
+        String command = e.getActionCommand();
 
+        switch (command) {
+            case "order" -> handleOrderAction();
+            case "back" -> handleBackAction();
+        }
+    }
+     private void handleOrderAction() {
+        MenuView menuView = (MenuView) view;
+        int selectedIndex = menuView.menuList.getSelectedIndex();
+        if (selectedIndex != -1 && selectedIndex < model.getMenus(connection).size()) {
+            updateReservation(menuView.getReservationID(), selectedIndex); // Update reservation
+        } else {
+            JOptionPane.showMessageDialog(menuView.getFrame(),
+                    "Please select a proper menu item to order.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    public void updateReservation(int reservationID, int menuID) {
+        boolean isUpdated = model.updateMenuForReservation(reservationID, menuID, connection);
+
+        if (isUpdated) {
+            JOptionPane.showMessageDialog(((MenuView) view).getFrame(),
+                    "Reservation updated successfully.",
+                    "Update Success",
+                    JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(((MenuView) view).getFrame(),
+                    "Failed to update reservation.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    private void handleBackAction() {
+        // Handle back action
+        // For example, you can navigate to the previous view or close the current view
+        JOptionPane.showMessageDialog(((MenuView) view).getFrame(),
+                "Back button clicked.",
+                "Back",
+                JOptionPane.INFORMATION_MESSAGE);
+    }
     @Override
     public void handleLogin(String username, String password, String role) {
         throw new UnsupportedOperationException("handleLogin is not supported in MenuController");

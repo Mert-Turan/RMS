@@ -68,16 +68,11 @@ public class MenuView extends View implements ViewInterface {
 
         mainPanel.add(panel, "menu");
 
-        orderButton.addActionListener(e -> {
-            int selectedIndex = menuList.getSelectedIndex();
-            if (selectedIndex != -1 && controller instanceof MenuController menuController) {
-                menuController.updateReservation(reservationID,selectedIndex); //for auto gen. order
-            } else {
-                JOptionPane.showMessageDialog(frame, "Please select a menu item to order.", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        });
-
-        backButton.addActionListener(e -> cardLayout.show(mainPanel, "initial"));
+        orderButton.setActionCommand("order");
+        backButton.setActionCommand("back");
+        orderButton.addActionListener(controller);
+        backButton.addActionListener(controller);
+       
     }
 
     @Override
