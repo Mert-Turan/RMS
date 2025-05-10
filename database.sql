@@ -94,8 +94,22 @@ BEGIN
 END$$
 DELIMITER ;
 
+-- order ödendiğinde orders table'ından silinecek.
+DELIMITER $$
+CREATE TRIGGER trg_delete_order_on_payment
+AFTER UPDATE ON Reservation
+FOR EACH ROW
+BEGIN
+    IF NEW.isPaid = TRUE AND OLD.isPaid = FALSE THEN
+        DELETE FROM Orders
+        WHERE reservationID = NEW.reservationID;
+    END IF;
+END$$
+DELIMITER ;
+
 
 -- supervisior payment ödenmişse rezervasyonu kapatırsa tableın o slotu available olarak güncellenir
+DELIMITER $$
 CREATE TRIGGER trg_close_reservation
 AFTER UPDATE ON Reservation
 FOR EACH ROW
@@ -105,10 +119,12 @@ BEGIN
         SET isAvailable = TRUE
         WHERE slotID = NEW.slotID;
     END IF;
-END;
+END$$
+DELIMITER ;
 
 
 -- kullanıcı menü seçince seçilen menünün fiyatı payment amount olarak reservation bilgilerine eklenir
+DELIMITER $$
 CREATE TRIGGER trg_set_payment_amount
 BEFORE UPDATE ON Reservation
 FOR EACH ROW
@@ -116,9 +132,11 @@ BEGIN
     IF NEW.menuID IS NOT NULL AND (OLD.menuID IS NULL OR OLD.menuID != NEW.menuID) THEN
         SET NEW.paymentAmount = (SELECT price FROM Menu WHERE menuID = NEW.menuID);
     END IF;
-END;
+END$$
+DELIMITER ;
 
 -- customer rezervasyonu iptal ederse masanın o time slotu available olarak güncellenir
+DELIMITER $$
 CREATE TRIGGER trg_reservation_delete
 AFTER DELETE ON Reservation
 FOR EACH ROW
@@ -126,7 +144,8 @@ BEGIN
     UPDATE TableSlots
     SET isAvailable = TRUE
     WHERE slotID = OLD.slotID;
-END;
+END$$
+DELIMITER ;
 
 
 -- customer kendi rezervasyonlarını görüntülemesi
@@ -217,7 +236,7 @@ CREATE TRIGGER trg_create_order_after_booking
 AFTER UPDATE ON Reservation
 FOR EACH ROW
 BEGIN
-    IF NEW.menuID IS NOT NULL THEN
+    IF (OLD.menuID IS NULL AND NEW.menuID IS NOT NULL) THEN
         INSERT INTO Orders (reservationID, menuID)
         VALUES (NEW.reservationID, NEW.menuID);
     END IF;

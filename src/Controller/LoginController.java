@@ -1,10 +1,12 @@
 package Controller;
 
 import Model.DBConnection;
+import Model.Payment;
 import Model.ReservationModel;
 import Model.User;
 import View.LoginView;
 import View.OrderView;
+import View.PaymentView;
 import View.ReservationView;
 
 import java.sql.Connection;
@@ -47,6 +49,14 @@ public class LoginController extends Controller implements ControllerInterface {
                 OrderController orderController = new OrderController(orderView, conn);
                 orderController.setUser(user);
                 orderView.show();
+                view.close();
+            } else {
+                PaymentView paymentView = new PaymentView();
+                Connection conn = DBConnection.getConnection();
+                Payment payment = new Payment();
+                PaymentController paymentController = new PaymentController(paymentView, payment, conn);
+                paymentController.setUser(user);
+                paymentView.show();
                 view.close();
             }
 
