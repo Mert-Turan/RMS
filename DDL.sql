@@ -1,0 +1,186 @@
+DROP DATABASE restaurant_management;
+CREATE DATABASE restaurant_management;
+USE restaurant_management;
+
+CREATE TABLE Users (
+    userID INT AUTO_INCREMENT PRIMARY KEY,
+    password VARCHAR(50) UNIQUE NOT NULL,
+    username VARCHAR(50) UNIQUE NOT NULL
+);
+
+CREATE TABLE Customers (
+    customerID INT PRIMARY KEY,
+    FOREIGN KEY (customerID) REFERENCES Users(userID)
+);
+
+CREATE TABLE Waiters (
+    waiterID INT PRIMARY KEY ,
+    FOREIGN KEY (waiterID) REFERENCES Users(userID)
+);
+
+CREATE TABLE Supervisors (
+    supervisorID INT PRIMARY KEY,
+    FOREIGN KEY (supervisorID) REFERENCES Users(userID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+CREATE TABLE Tables (
+    tableID INT AUTO_INCREMENT PRIMARY KEY,
+    tableName VARCHAR(50),
+    capacity INT,
+    view ENUM('sea view', 'garden view', 'city view') NOT NULL
+);
+
+CREATE TABLE TableSlots (
+    slotID INT AUTO_INCREMENT PRIMARY KEY,
+    tableID INT,
+    slotType ENUM('morning', 'afternoon', 'evening') NOT NULL,
+    isAvailable BOOLEAN DEFAULT TRUE,
+    FOREIGN KEY (tableID) REFERENCES Tables(tableID),
+    UNIQUE(tableID, slotType)
+);
+
+CREATE TABLE Menu (
+    menuID INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    price DECIMAL(10,2) NOT NULL
+);
+
+
+CREATE TABLE Reservation (
+    reservationID INT AUTO_INCREMENT PRIMARY KEY,
+    customerID INT NOT NULL,
+    slotID INT NOT NULL,
+    menuID INT DEFAULT NULL,
+    paymentAmount DECIMAL(10, 2) DEFAULT NULL,
+    isPaid BOOLEAN DEFAULT FALSE,
+    status ENUM('active', 'closed', 'cancelled') DEFAULT 'active',
+    FOREIGN KEY (customerID) REFERENCES Customers(customerID),
+    FOREIGN KEY (slotID) REFERENCES TableSlots(slotID),
+    FOREIGN KEY (menuID) REFERENCES Menu(menuID)
+);
+
+CREATE TABLE Orders (
+    orderID INT AUTO_INCREMENT PRIMARY KEY,
+    reservationID INT NOT NULL,
+    menuID INT NOT NULL,
+    status ENUM('ordered', 'preparing', 'ready', 'delivered') DEFAULT 'ordered',
+    FOREIGN KEY (reservationID) REFERENCES Reservation(reservationID),
+    FOREIGN KEY (menuID) REFERENCES Menu(menuID)
+);
+
+-- Rezervasyon yapildiginda rezerve edilen masanin o zaman dilimi dolu olarak guncellenir
+DELIMITER $$
+CREATE TRIGGER trg_reserve_slot
+AFTER INSERT ON Reservation
+FOR EACH ROW
+BEGIN
+    UPDATE TableSlots
+    SET isAvailable = FALSE
+    WHERE slotID = NEW.slotID;
+END$$
+DELIMITER ;
+
+-- masa müsait değilse customer rezerve edemesin
+
+DELIMITER $$
+CREATE TRIGGER trg_prevent_reservation_unavailable_slot
+BEFORE INSERT ON Reservation
+FOR EACH ROW
+BEGIN
+    IF (SELECT isAvailable FROM TableSlots WHERE slotID = NEW.slotID) = FALSE THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'This time slot is not available for reservation.';
+    END IF;
+END$$
+DELIMITER ;
+
+-- order ödendiğinde orders table'ından silinecek.
+DELIMITER $$
+CREATE TRIGGER trg_delete_order_on_payment
+AFTER UPDATE ON Reservation
+FOR EACH ROW
+BEGIN
+    IF NEW.isPaid = TRUE AND OLD.isPaid = FALSE THEN
+        DELETE FROM Orders
+        WHERE reservationID = NEW.reservationID;
+    END IF;
+END$$
+DELIMITER ;
+
+
+-- supervisior payment ödenmişse rezervasyonu kapatırsa tableın o slotu available olarak güncellenir
+DELIMITER $$
+CREATE TRIGGER trg_close_reservation
+AFTER UPDATE ON Reservation
+FOR EACH ROW
+BEGIN
+    IF NEW.status = 'closed' AND OLD.status != 'closed' THEN
+        UPDATE TableSlots
+        SET isAvailable = TRUE
+        WHERE slotID = NEW.slotID;
+    END IF;
+END$$
+DELIMITER ;
+
+
+-- kullanıcı menü seçince seçilen menünün fiyatı payment amount olarak reservation bilgilerine eklenir
+DELIMITER $$
+CREATE TRIGGER trg_set_payment_amount
+BEFORE UPDATE ON Reservation
+FOR EACH ROW
+BEGIN
+    IF NEW.menuID IS NOT NULL AND (OLD.menuID IS NULL OR OLD.menuID != NEW.menuID) THEN
+        SET NEW.paymentAmount = (SELECT price FROM Menu WHERE menuID = NEW.menuID);
+    END IF;
+END$$
+DELIMITER ;
+
+-- customer rezervasyonu iptal ederse masanın o time slotu available olarak güncellenir
+DELIMITER $$
+CREATE TRIGGER trg_reservation_delete
+AFTER DELETE ON Reservation
+FOR EACH ROW
+BEGIN
+    UPDATE TableSlots
+    SET isAvailable = TRUE
+    WHERE slotID = OLD.slotID;
+END$$
+DELIMITER ;
+
+
+
+
+-- supervisior ödenmemiş bir rezervasyonu kapamaya çalışırsa uyarı vermeli
+DELIMITER $$
+
+CREATE TRIGGER trg_prevent_unpaid_closing
+BEFORE UPDATE ON Reservation
+FOR EACH ROW
+BEGIN
+    IF NEW.status = 'closed' AND OLD.status != 'closed' AND OLD.isPaid = FALSE THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Cannot close reservation before payment is made.';
+    END IF;
+END$$
+
+DELIMITER ;
+
+-- customer table ve menü seçip reservation oluşturduktan sonra order oluşur
+DELIMITER $$
+
+CREATE TRIGGER trg_create_order_after_booking
+AFTER UPDATE ON Reservation
+FOR EACH ROW
+BEGIN
+    IF (OLD.menuID IS NULL AND NEW.menuID IS NOT NULL) THEN
+        INSERT INTO Orders (reservationID, menuID)
+        VALUES (NEW.reservationID, NEW.menuID);
+    END IF;
+END$$
+
+DELIMITER ;
+
+
+
+
