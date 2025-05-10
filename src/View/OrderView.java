@@ -3,7 +3,7 @@ package View;
 import javax.swing.*;
 import java.awt.*;
 
-public class OrderView extends View {
+public class OrderView extends View implements ViewInterface {
     private final JFrame frame;
     private final DefaultListModel<String> listModel;
     private final JList<String> orderList;
@@ -28,6 +28,11 @@ public class OrderView extends View {
 
         frame.add(scrollPane, BorderLayout.CENTER);
         frame.add(bottomPanel, BorderLayout.SOUTH);
+    }
+
+    @Override
+    public void close() {
+        //
     }
 
     public void show() {
