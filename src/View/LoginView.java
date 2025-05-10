@@ -2,28 +2,19 @@ package View;
 
 import Controller.Controller;
 import Controller.LoginController;
-
 import Model.User;
-
 
 import javax.swing.*;
 import java.awt.*;
+import java.sql.SQLException;
 
 public class LoginView extends View implements ViewInterface {
     private String userId;
     private String password;
-
     private Controller controller;
-    private User currentUser;
-
     private final JFrame frame;
-    private JLabel titleLabel;
     private final JPanel mainPanel;
     private final CardLayout cardLayout;
-    private JPasswordField passwordField;
-
-
-
     private final java.util.Map<String, JLabel> statusLabels = new java.util.HashMap<>();
     private String currentRoleKey = ""; // stores "customer", "waiter", "supervisor"
 
@@ -35,8 +26,6 @@ public class LoginView extends View implements ViewInterface {
 
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
-
-
 
         setupInitialScreen();
         createLoginScreen("customer", "customer");
@@ -86,13 +75,15 @@ public class LoginView extends View implements ViewInterface {
                 currentRoleKey = "customer";
                 cardLayout.show(mainPanel, "customer");
             });
-            waiterButton.addActionListener(e -> {
-                currentRoleKey = "waiter";
-                cardLayout.show(mainPanel, "waiter");
-            });
+
             supervisorButton.addActionListener(e -> {
                 currentRoleKey = "supervisor";
                 cardLayout.show(mainPanel, "supervisor");
+            });
+
+            waiterButton.addActionListener(e -> {
+                currentRoleKey = "waiter";
+                cardLayout.show(mainPanel, "waiter");
             });
 
         } catch (Exception e) {
@@ -124,7 +115,7 @@ public class LoginView extends View implements ViewInterface {
 
             JLabel passwordLabel = new JLabel("Password:");
             passwordLabel.setForeground(Color.WHITE);
-            passwordField = new JPasswordField(15);
+            JPasswordField passwordField = new JPasswordField(15);
 
             JButton loginButton = new JButton("Login");
             JButton backButton = new JButton("⇐"); // Unicode arrow (or use "<=")
@@ -176,14 +167,20 @@ public class LoginView extends View implements ViewInterface {
 
             mainPanel.add(panel, roleKey);
 
-            // Button Actions
+            backButton.addActionListener(e -> {
+                currentRoleKey = "";
+                cardLayout.show(mainPanel, "initial");
+            });
+
             loginButton.addActionListener(e -> {
                 userId = nameField.getText();
                 password = new String(passwordField.getPassword());
-                //reservationView.show();
-
                 if (controller != null) {
-                    controller.handleLogin(userId, password, roleKey);
+                    try {
+                        controller.handleLogin(userId, password, roleKey);
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
+                    }
                 }
             });
 
@@ -193,15 +190,6 @@ public class LoginView extends View implements ViewInterface {
                 if (controller instanceof LoginController loginController) {
                     loginController.handleSignUp(userId, password, roleKey);
                 }
-            });
-
-
-
-
-
-            backButton.addActionListener(e -> {
-                currentRoleKey = ""; // reset to avoid null label lookup
-                cardLayout.show(mainPanel, "initial");
             });
 
         } catch (Exception e) {
@@ -224,10 +212,6 @@ public class LoginView extends View implements ViewInterface {
         }
     }
 
-    public String getPassword() {
-        return new String(passwordField.getPassword());
-    }
-
     @Override
     public void setUser(User user) {
         this.currentUser = user;
@@ -247,8 +231,12 @@ public class LoginView extends View implements ViewInterface {
     public String getViewName() {
         return "LoginView";
     }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void close() {
+        this.frame.dispose(); // or frame.setVisible(false);
+    }
 }
-
-
-
-

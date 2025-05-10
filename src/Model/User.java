@@ -83,17 +83,15 @@ public abstract class User {
             if (generatedKeys.next()) {
                 int userID = generatedKeys.getInt(1);
                 PreparedStatement roleStmt = switch (role.toLowerCase()) {
-                    case "customer" -> conn.prepareStatement("INSERT INTO Customers (customerID, username, password) VALUES (?, ?, ?)");
-                    case "waiter" -> conn.prepareStatement("INSERT INTO Waiters (waiterID, username, password) VALUES (?, ?, ?)");
-                    case "supervisor" -> conn.prepareStatement("INSERT INTO Supervisors (supervisorID, username, password) VALUES (?, ?, ?)");
+                    case "customer" -> conn.prepareStatement("INSERT INTO Customers (customerID) VALUES (?)");
+                    case "waiter" -> conn.prepareStatement("INSERT INTO Waiters (waiterID) VALUES (?)");
+                    case "supervisor" -> conn.prepareStatement("INSERT INTO Supervisors (supervisorID) VALUES (?)");
                     default -> null;
                 };
 
                 if (roleStmt == null) return false;
 
                 roleStmt.setInt(1, userID);
-                roleStmt.setString(2, username);
-                roleStmt.setString(3, password);
                 roleStmt.executeUpdate();
 
                 conn.commit();

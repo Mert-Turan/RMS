@@ -11,13 +11,13 @@ import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.util.List;
 
-public class ReservationController extends Controller {
+public class ReservationController extends Controller implements ControllerInterface {
 
     private final Connection conn;
     private final ReservationModel model;
+    private User loggedInUser;
     private LoginView loginView;
     private ReservationView reservationView;
-
 
     public ReservationController(ReservationView reservationView, Connection conn,  ReservationModel model) {
         super(reservationView);
@@ -25,11 +25,6 @@ public class ReservationController extends Controller {
         this.model = new ReservationModel();
         this.setUser(user);
         this.reservationView = reservationView;
-        setupView();
-
-
-
-
         setupView();
         addListeners();
     }
@@ -67,7 +62,7 @@ public class ReservationController extends Controller {
 
                 int slotID = Integer.parseInt(selected.split("SlotID: ")[1].split(" ")[0]);
                 //String customerPassword= loginView.Password();
-                String customerPassword = "1";
+                String customerPassword = loggedInUser.getUserPassword();
 
                 boolean success = model.makeReservation(customerPassword, slotID, conn);
                 if (success) {
@@ -85,7 +80,7 @@ public class ReservationController extends Controller {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //String customerPassword= loginView.Password(); after login connection this will be used to get password
-                String password = "1";
+                String password = loggedInUser.getUserPassword();
 
                 List<String[]> reservations = model.viewMyReservations(password, conn);
                 if (reservations.isEmpty()) {
@@ -115,8 +110,10 @@ public class ReservationController extends Controller {
         // Not needed for ReservationController
     }
 
-
-
+    @Override
+    public void setUser(User user) {
+        this.loggedInUser = user;
+    }
 }
 
 

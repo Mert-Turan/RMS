@@ -8,7 +8,7 @@ public class UserFetcher {
     public static void main(String[] args) {
         String url = "jdbc:mysql://localhost:3306/restaurant_management";
         String user = "root";         // your DB user
-        String password = "your_pass"; // your DB password
+        String password = "127856tkn"; // your DB password
 
         String query = "SELECT * FROM Users";
 
@@ -22,6 +22,7 @@ public class UserFetcher {
                 String pwd = rs.getString("password");
 
                 System.out.println("UserID: " + userId + ", Username: " + username + ", Password: " + pwd);
+                //System.out.println("UserID: " + userId);
             }
 
         } catch (SQLException e) {

@@ -9,7 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
-public class MenuView extends View implements MenuViewInterface {
+public class MenuView extends View implements ViewInterface {
     private Controller controller;
     private final JFrame frame;
     private final JPanel mainPanel;
@@ -109,4 +109,8 @@ public class MenuView extends View implements MenuViewInterface {
         // this.user = user;
     }
 
+    @Override
+    public void close() {
+        //
+    }
 }

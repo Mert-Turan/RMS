@@ -29,4 +29,6 @@ public abstract class View implements ViewInterface {
     public void renderHeader() {
         System.out.println("=== " + viewTitle + " ===");
     }
+
+    public abstract void close();
 }

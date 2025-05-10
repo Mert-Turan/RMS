@@ -5,11 +5,11 @@ import Model.User;
 import javax.swing.*;
 import java.awt.*;
 
-public class ReservationView extends View {
-    private JFrame frame;
-    private JComboBox<String> tableSlotComboBox;
-    private JButton reserveButton;
-    private JButton viewReservationsButton;
+public class ReservationView extends View implements ViewInterface {
+    private final JFrame frame;
+    private final JComboBox<String> tableSlotComboBox;
+    private final JButton reserveButton;
+    private final JButton viewReservationsButton;
 
 
     public ReservationView() {
@@ -73,6 +73,11 @@ public class ReservationView extends View {
         // If you're not using user data, this can stay empty
         // Or you can store it like:
         // this.user = user;
+    }
+
+    @Override
+    public void close() {
+        frame.setVisible(false);
     }
 
     public JButton getViewReservationsButton() {

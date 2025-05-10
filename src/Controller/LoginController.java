@@ -1,15 +1,22 @@
 package Controller;
 
+import Model.DBConnection;
+import Model.ReservationModel;
 import Model.User;
 import View.LoginView;
+import View.ReservationView;
+
+import java.sql.Connection;
+import java.sql.SQLException;
 
 public class LoginController extends Controller {
 
     public LoginController(LoginView view) {
         super(view);
+        this.view = view;
     }
 
-    public void handleLogin(String fullName, String password, String role) {
+    public void handleLogin(String fullName, String password, String role) throws SQLException {
         if (fullName.isEmpty() || password.isEmpty()) {
             view.updateView("You have to write a username and password!");
             return;
@@ -19,6 +26,21 @@ public class LoginController extends Controller {
         if (user != null) {
             setUser(user);
             view.updateView("Login successful!");
+
+            if ("customer".equalsIgnoreCase(role)) {
+                ReservationView reservationView = new ReservationView();
+                ReservationModel reservationModel = new ReservationModel();
+                Connection conn = DBConnection.getConnection();
+
+                ReservationController reservationController = new ReservationController(
+                        reservationView, conn, reservationModel
+                );
+                reservationController.setUser(user); // propagate user if needed
+
+                reservationView.show(); // open reservation screen
+                view.close();           // hide login screen (optional)
+            }
+
         } else {
             view.updateView("You have to sign up before login!");
         }
