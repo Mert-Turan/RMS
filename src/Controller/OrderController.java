@@ -1,39 +1,57 @@
 package Controller;
 
-import Model.Order;
 import Model.OrderModel;
+import View.OrderView;
 
+import javax.swing.*;
 import java.sql.Connection;
-import java.util.List;
 
 public class OrderController extends Controller {
-    private final Connection connection;
-    private final OrderModel orderModel;
+    private final OrderModel model;
+    private final Connection conn;
+    private final OrderView orderView;
 
-    public OrderController(Connection connection) {
-        super(null);
-        this.connection = connection;
-        this.orderModel = new OrderModel();
+    public OrderController(OrderView view, Connection conn) {
+        super(view);
+        this.conn = conn;
+        this.model = new OrderModel();
+        this.orderView = view;
+
+        setupOrders();
+        addListeners();
     }
 
-    public boolean addOrder(Order order) {
-        return orderModel.addOrder(order, connection);
+    private void setupOrders() {
+        OrderView ov = (OrderView) view;
+        ov.setOrders(model.getAllOrders(conn));
+        ov.show();
     }
 
-    public List<Order> getOrdersByUser(int userID) {
-        return orderModel.getOrdersByUser(userID, connection);
-    }
+    private void addListeners() {
+        orderView.getUpdateButton().addActionListener(e -> {
+            int selectedIndex = orderView.getOrderList().getSelectedIndex();
+            if (selectedIndex == -1) {
+                JOptionPane.showMessageDialog(orderView.getFrame(), "Please select an order to update.");
+                return;
+            }
 
-    public List<Order> getAllOrders() {
-        return orderModel.getAllOrders(connection);
-    }
+            String selectedValue = orderView.getOrderList().getSelectedValue();
+            int orderID = Integer.parseInt(selectedValue.split(" ")[1]);
 
-    public boolean updateOrderStatus(int orderID, String newStatus) {
-        return orderModel.updateOrderStatus(orderID, newStatus, connection);
+            String newStatus = (String) orderView.getStatusBox().getSelectedItem();
+            boolean success = model.updateOrderStatus(orderID, newStatus, conn);
+
+            if (success) {
+                JOptionPane.showMessageDialog(orderView.getFrame(), "✅ Order status updated successfully!");
+                setupOrders(); // Refresh the list
+            } else {
+                JOptionPane.showMessageDialog(orderView.getFrame(), "❌ Failed to update order status.");
+            }
+        });
     }
 
     @Override
-    public void handleLogin(String username, String password, String role) {
-        throw new UnsupportedOperationException("Login is not supported in OrderController");
+    public void handleLogin(String fullName, String password, String role) {
+        // Not needed in OrderController
     }
 }
