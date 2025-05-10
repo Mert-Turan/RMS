@@ -17,7 +17,7 @@ public class MenuView extends View implements ViewInterface {
     private final DefaultListModel<String> menuListModel;
     private JList<String> menuList;
 
-    public MenuView(reservationID) {
+    public MenuView(int reservationID) {
         frame = new JFrame("Menu Management");
         frame.setSize(600, 400);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -27,13 +27,27 @@ public class MenuView extends View implements ViewInterface {
         mainPanel = new JPanel(cardLayout);
 
         menuListModel = new DefaultListModel<>();
+        setupInitialScreen(); // "initial" sayfasını ekliyoruz
         setupMenuScreen(reservationID);
 
         frame.add(mainPanel);
         frame.setVisible(true);
     }
 
-    private void setupMenuScreen(reservationID) {
+    private void setupInitialScreen() {
+        JPanel initialPanel = new JPanel(new BorderLayout());
+        JLabel welcomeLabel = new JLabel("Welcome to the Menu Management System", SwingConstants.CENTER);
+        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        initialPanel.add(welcomeLabel, BorderLayout.CENTER);
+
+        JButton menuButton = new JButton("Go to Menu");
+        menuButton.addActionListener(e -> cardLayout.show(mainPanel, "menu"));
+        initialPanel.add(menuButton, BorderLayout.SOUTH);
+
+        mainPanel.add(initialPanel, "initial");
+    }
+
+    private void setupMenuScreen(int reservationID) {
         JPanel panel = new JPanel(new BorderLayout());
 
         JLabel title = new JLabel("Menu List", SwingConstants.CENTER);
