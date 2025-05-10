@@ -18,8 +18,6 @@ public class MenuModel {
         this.price = price;
     }
 
-
-
     public List<MenuModel> getMenus(Connection conn) {
         List<MenuModel> menus = new ArrayList<>();
         String sql = "SELECT menuID, name, price FROM Menu";
@@ -40,8 +38,6 @@ public class MenuModel {
 
         return menus;
     }
-
-
 
     //after customer choosing menu update reservation infos
     public boolean updateMenuForReservation(int reservationID, int menuID, Connection conn) {
@@ -108,6 +104,4 @@ public class MenuModel {
     public double getPrice() {
         return price;
     }
-
-
 }

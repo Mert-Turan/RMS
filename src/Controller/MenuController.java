@@ -5,10 +5,12 @@ import Model.Order;
 import View.MenuView;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.util.List;
 
-public class MenuController extends Controller {
+public class MenuController extends Controller implements ControllerInterface, ActionListener {
     private final MenuModel model;
     private final Connection connection;
 
@@ -18,7 +20,7 @@ public class MenuController extends Controller {
         this.connection = connection;
         view.setController(this); 
     }
-     @Override
+
     public void actionPerformed(ActionEvent e) {
         String command = e.getActionCommand();
 
@@ -27,11 +29,12 @@ public class MenuController extends Controller {
             case "back" -> handleBackAction();
         }
     }
-     private void handleOrderAction() {
+
+    private void handleOrderAction() {
         MenuView menuView = (MenuView) view;
-        int selectedIndex = menuView.menuList.getSelectedIndex();
+        int selectedIndex = menuView.getMenuList().getSelectedIndex();
         if (selectedIndex != -1 && selectedIndex < model.getMenus(connection).size()) {
-            updateReservation(menuView.getReservationID(), selectedIndex); // Update reservation
+            updateReservation(menuView.getReservationID(), selectedIndex);
         } else {
             JOptionPane.showMessageDialog(menuView.getFrame(),
                     "Please select a proper menu item to order.",
@@ -39,21 +42,7 @@ public class MenuController extends Controller {
                     JOptionPane.ERROR_MESSAGE);
         }
     }
-    public void updateReservation(int reservationID, int menuID) {
-        boolean isUpdated = model.updateMenuForReservation(reservationID, menuID, connection);
 
-        if (isUpdated) {
-            JOptionPane.showMessageDialog(((MenuView) view).getFrame(),
-                    "Reservation updated successfully.",
-                    "Update Success",
-                    JOptionPane.INFORMATION_MESSAGE);
-        } else {
-            JOptionPane.showMessageDialog(((MenuView) view).getFrame(),
-                    "Failed to update reservation.",
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
-        }
-    }
     private void handleBackAction() {
         // Handle back action
         // For example, you can navigate to the previous view or close the current view

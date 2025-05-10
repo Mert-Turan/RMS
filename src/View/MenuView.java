@@ -1,22 +1,22 @@
 package View;
 
-import Controller.Controller;
 import Controller.MenuController;
 import Model.MenuModel;
 import Model.User;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.util.List;
 
 public class MenuView extends View implements ViewInterface {
-    private Controller controller;
+    private MenuController controller;
     private final JFrame frame;
     private final JPanel mainPanel;
     private final CardLayout cardLayout;
     private final DefaultListModel<String> menuListModel;
     private JList<String> menuList;
-    private final int restaurantID;
+    private final int reservationID;
 
     public MenuView(int reservationID) {
         this.reservationID = reservationID;
@@ -95,10 +95,10 @@ public class MenuView extends View implements ViewInterface {
     }
 
     public int getReservationID() {
-    return reservationID;
+        return this.reservationID;
     }
-    @Override
-    public void setController(Controller controller) {
+
+    public void setController(MenuController controller) {
         this.controller = controller;
     }
 
@@ -114,6 +114,10 @@ public class MenuView extends View implements ViewInterface {
 
     public JFrame getFrame() {
         return frame;
+    }
+
+    public JList<String> getMenuList() {
+        return this.menuList;
     }
 
     @Override

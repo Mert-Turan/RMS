@@ -1,7 +1,6 @@
 package Controller;
 
 import Model.DBConnection;
-import Model.OrderModel;
 import Model.ReservationModel;
 import Model.User;
 import View.LoginView;
@@ -11,13 +10,13 @@ import View.ReservationView;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class LoginController extends Controller {
+public class LoginController extends Controller implements ControllerInterface {
 
     public LoginController(LoginView view) {
         super(view);
         this.view = view;
     }
-
+    @Override
     public void handleLogin(String fullName, String password, String role) throws SQLException {
         if (fullName.isEmpty() || password.isEmpty()) {
             view.updateView("You have to write a username and password!");

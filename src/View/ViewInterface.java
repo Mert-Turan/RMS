@@ -10,4 +10,5 @@ public interface ViewInterface {
     void setController(Controller controller);
     void reset();
     String getViewName();
+    void close();
 }
