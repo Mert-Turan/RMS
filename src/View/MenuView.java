@@ -17,7 +17,7 @@ public class MenuView extends View implements ViewInterface {
     private final DefaultListModel<String> menuListModel;
     private JList<String> menuList;
 
-    public MenuView(reservationID) {
+    public MenuView(int reservationID) {
         frame = new JFrame("Menu Management");
         frame.setSize(600, 400);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -33,7 +33,7 @@ public class MenuView extends View implements ViewInterface {
         frame.setVisible(true);
     }
 
-    private void setupMenuScreen(reservationID) {
+    private void setupMenuScreen(int reservationID) {
         JPanel panel = new JPanel(new BorderLayout());
 
         JLabel title = new JLabel("Menu List", SwingConstants.CENTER);

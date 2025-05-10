@@ -6,7 +6,7 @@ import View.OrderView;
 import javax.swing.*;
 import java.sql.Connection;
 
-public class OrderController extends Controller {
+public class OrderController extends Controller implements ControllerInterface {
     private final OrderModel model;
     private final Connection conn;
     private final OrderView orderView;

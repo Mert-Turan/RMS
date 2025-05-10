@@ -1,9 +1,11 @@
 package Controller;
 
 import Model.DBConnection;
+import Model.OrderModel;
 import Model.ReservationModel;
 import Model.User;
 import View.LoginView;
+import View.OrderView;
 import View.ReservationView;
 
 import java.sql.Connection;
@@ -39,6 +41,14 @@ public class LoginController extends Controller {
 
                 reservationView.show(); // open reservation screen
                 view.close();           // hide login screen (optional)
+            } else if ("waiter".equalsIgnoreCase(role)) {
+                OrderView orderView = new OrderView();
+                Connection conn = DBConnection.getConnection();
+
+                OrderController orderController = new OrderController(orderView, conn);
+                orderController.setUser(user);
+                orderView.show();
+                view.close();
             }
 
         } else {
