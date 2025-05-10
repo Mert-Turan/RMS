@@ -121,12 +121,12 @@ public class ReservationController extends Controller implements ControllerInter
 
                 int latestReservationID = Integer.parseInt(reservations.get(reservations.size() - 1)[0]);
 
-                MenuView menuView = new MenuView(latestReservationID);
-                MenuModel menuModel = new MenuModel(0, "", 0);
-                MenuController menuController = new MenuController(menuView, menuModel, conn);
+                MenuView menuView = new MenuView();
+                MenuModel menuModel = new MenuModel();
+                MenuController menuController = new MenuController(menuView, conn,password);
                 menuView.setController(menuController);
 
-                List<MenuModel> menus = menuModel.getMenus(conn);
+                List<String[]> menus = menuModel.getMenus(conn);
                 menuView.updateView(menus);
                 menuView.show();
             }

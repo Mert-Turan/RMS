@@ -213,11 +213,10 @@ DELIMITER ;
 -- customer table ve menü seçip reservation oluşturduktan sonra order oluşur
 DELIMITER $$
 
-CREATE TRIGGER trg_create_order_after_reservation
-AFTER INSERT ON Reservation
+CREATE TRIGGER trg_create_order_after_booking
+AFTER UPDATE ON Reservation
 FOR EACH ROW
 BEGIN
-
     IF NEW.menuID IS NOT NULL THEN
         INSERT INTO Orders (reservationID, menuID)
         VALUES (NEW.reservationID, NEW.menuID);

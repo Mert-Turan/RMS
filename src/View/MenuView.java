@@ -1,81 +1,58 @@
 package View;
 
-import Controller.MenuController;
-import Model.MenuModel;
 import Model.User;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.util.List;
 
 public class MenuView extends View implements ViewInterface {
-    private MenuController controller;
     private final JFrame frame;
-    private final JPanel mainPanel;
-    private final CardLayout cardLayout;
-    private final DefaultListModel<String> menuListModel;
-    private JList<String> menuList;
-    private final int reservationID;
+    private final JComboBox<String> menuBox;
+    private final JButton selectButton;
 
-    public MenuView(int reservationID) {
-        this.reservationID = reservationID;
-        frame = new JFrame("Menu Management");
-        frame.setSize(600, 400);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLocationRelativeTo(null);
+    public MenuView() {
+        super("Select a Menu");
 
-        cardLayout = new CardLayout();
-        mainPanel = new JPanel(cardLayout);
+        frame = new JFrame(viewTitle);
+        frame.setSize(400, 200);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setLayout(new BorderLayout());
 
-        menuListModel = new DefaultListModel<>();
-        setupInitialScreen(); // "initial" sayfasını ekliyoruz
-        setupMenuScreen(reservationID);
+        JPanel panel = new JPanel(new GridLayout(2, 1));
+        menuBox = new JComboBox<>();
+        selectButton = new JButton("Select Menu");
 
-        frame.add(mainPanel);
-        frame.setVisible(true);
+        panel.add(new JLabel("Select a Menu:"));
+        panel.add(menuBox);
+
+        frame.add(panel, BorderLayout.CENTER);
+        frame.add(selectButton, BorderLayout.SOUTH);
     }
 
-    private void setupInitialScreen() {
-        JPanel initialPanel = new JPanel(new BorderLayout());
-        JLabel welcomeLabel = new JLabel("Welcome to the Menu Management System", SwingConstants.CENTER);
-        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        initialPanel.add(welcomeLabel, BorderLayout.CENTER);
+    // === Getters for Controller ===
 
-        JButton menuButton = new JButton("Go to Menu");
-        menuButton.addActionListener(e -> cardLayout.show(mainPanel, "menu"));
-        initialPanel.add(menuButton, BorderLayout.SOUTH);
-
-        mainPanel.add(initialPanel, "initial");
+    public JComboBox<String> getMenuBox() {
+        return menuBox;
     }
 
-    private void setupMenuScreen(int reservationID) {
-        JPanel panel = new JPanel(new BorderLayout());
-
-        JLabel title = new JLabel("Menu List", SwingConstants.CENTER);
-        title.setFont(new Font("Arial", Font.BOLD, 24));
-        panel.add(title, BorderLayout.NORTH);
-
-        menuList = new JList<>(menuListModel);
-        JScrollPane scrollPane = new JScrollPane(menuList);
-        panel.add(scrollPane, BorderLayout.CENTER);
-
-        JButton orderButton = new JButton("Update Reservation");
-        JButton backButton = new JButton("Back");
-
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-        buttonPanel.add(orderButton);
-        buttonPanel.add(backButton);
-        panel.add(buttonPanel, BorderLayout.SOUTH);
-
-        mainPanel.add(panel, "menu");
-
-        orderButton.setActionCommand("order");
-        backButton.setActionCommand("back");
-        orderButton.addActionListener(controller);
-        backButton.addActionListener(controller);
-       
+    public JButton getSelectButton() {
+        return selectButton;
     }
+
+    public String getSelectedMenuID() {
+        String selected = (String) menuBox.getSelectedItem();
+        if (selected != null && selected.contains(" - ")) {
+            return selected.split(" - ")[0]; // Assuming format: "menuID - Menu Name"
+        }
+        return null;
+    }
+
+    public void addMenuItem(String item) {
+        menuBox.addItem(item);
+    }
+
+
+    // === ViewInterface Methods ===
 
     @Override
     public void show() {
@@ -84,27 +61,14 @@ public class MenuView extends View implements ViewInterface {
 
     @Override
     public void updateView(Object data) {
-        if (data instanceof List<?> menus) {
-            menuListModel.clear();
-            for (Object menu : menus) {
-                if (menu instanceof MenuModel menuModel) {
-                    menuListModel.addElement(menuModel.getName() + " - $" + menuModel.getPrice());
-                }
-            }
+        if (data instanceof String) {
+            JOptionPane.showMessageDialog(frame, (String) data);
         }
-    }
-
-    public int getReservationID() {
-        return this.reservationID;
-    }
-
-    public void setController(MenuController controller) {
-        this.controller = controller;
     }
 
     @Override
     public void reset() {
-        menuListModel.clear();
+        menuBox.removeAllItems();
     }
 
     @Override
@@ -112,23 +76,13 @@ public class MenuView extends View implements ViewInterface {
         return "MenuView";
     }
 
-    public JFrame getFrame() {
-        return frame;
-    }
-
-    public JList<String> getMenuList() {
-        return this.menuList;
-    }
-
     @Override
     public void setUser(User user) {
-        // If you're not using user data, this can stay empty
-        // Or you can store it like:
-        // this.user = user;
+        // You can store it if needed: this.user = user;
     }
 
     @Override
     public void close() {
-        //
+        frame.setVisible(false);
     }
 }
