@@ -69,6 +69,7 @@ public class Payment {
         String sql = "UPDATE Reservation SET status = 'closed' WHERE reservationID = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, reservationID);
+            stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
