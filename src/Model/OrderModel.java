@@ -1,61 +1,37 @@
 package Model;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class OrderModel {
-    public boolean addOrder(Order order, Connection connection) {
-        String query = "INSERT INTO Orders (reservationID, menuID, status) VALUES (?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, order.getReservationID());
-            stmt.setInt(2, order.getMenuID());
-            stmt.setString(3, order.getStatus());
-            return stmt.executeUpdate() > 0;
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
 
-    public List<Order> getOrdersByUser(int userID, Connection connection) {
-        List<Order> orders = new ArrayList<>();
-        String sql = """
-            SELECT o.orderID, o.reservationID, o.menuID, o.status
+    public List<String[]> getAllOrders(Connection conn) {
+        List<String[]> orders = new ArrayList<>();
+        String query = """
+            SELECT o.orderID,
+                   (SELECT name FROM Menu WHERE menuID = o.menuID) AS menuName,
+                   o.status,
+                   (SELECT tableName FROM Tables WHERE tableID = (
+                       SELECT tableID FROM TableSlots WHERE slotID = (
+                           SELECT slotID FROM Reservation WHERE reservationID = o.reservationID
+                       )
+                   )) AS tableName
             FROM Orders o
-            JOIN Reservation r ON o.reservationID = r.reservationID
-            WHERE r.customerID = ?
         """;
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, userID);
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                orders.add(new Order(
-                        rs.getInt("orderID"),
-                        rs.getInt("reservationID"),
-                        rs.getInt("menuID"),
-                        rs.getString("status")
-                ));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return orders;
-    }
 
-    public List<Order> getAllOrders(Connection connection) {
-        List<Order> orders = new ArrayList<>();
-        String sql = "SELECT * FROM Orders";
-        try (PreparedStatement stmt = connection.prepareStatement(sql);
+        try (PreparedStatement stmt = conn.prepareStatement(query);
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
-                orders.add(new Order(
-                        rs.getInt("orderID"),
-                        rs.getInt("reservationID"),
-                        rs.getInt("menuID"),
-                        rs.getString("status")
-                ));
+                String[] row = new String[4];
+                row[0] = String.valueOf(rs.getInt("orderID"));
+                row[1] = rs.getString("menuName");
+                row[2] = rs.getString("status");
+                row[3] = rs.getString("tableName");
+                orders.add(row);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -63,9 +39,9 @@ public class OrderModel {
         return orders;
     }
 
-    public boolean updateOrderStatus(int orderID, String newStatus, Connection connection) {
-        String sql = "UPDATE Orders SET status = ? WHERE orderID = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+    public boolean updateOrderStatus(int orderID, String newStatus, Connection conn) {
+        String query = "UPDATE Orders SET status = ? WHERE orderID = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, newStatus);
             stmt.setInt(2, orderID);
             return stmt.executeUpdate() > 0;
@@ -75,4 +51,3 @@ public class OrderModel {
         }
     }
 }
-
