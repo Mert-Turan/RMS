@@ -63,18 +63,18 @@ public class MenuModel {
             return false;
         }
     }
-    public boolean addOrderToDatabase(Order order, Connection connection) {
-        String query = "INSERT INTO Orders (reservationID, menuID, status) VALUES (?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, order.getReservationID());
-            stmt.setInt(2, order.getMenuID());
-            stmt.setString(3, order.getStatus());
-            return stmt.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
+    // public boolean addOrderToDatabase(Order order, Connection connection) {
+    //     String query = "INSERT INTO Orders (reservationID, menuID, status) VALUES (?, ?, ?)";
+    //     try (PreparedStatement stmt = connection.prepareStatement(query)) {
+    //         stmt.setInt(1, order.getReservationID());
+    //         stmt.setInt(2, order.getMenuID());
+    //         stmt.setString(3, order.getStatus());
+    //         return stmt.executeUpdate() > 0;
+    //     } catch (SQLException e) {
+    //         e.printStackTrace();
+    //         return false;
+    //     }
+    // }
 
     // helper function for generating orderID according to the database
     // public int getLastOrderIDFromDatabase(Connection connection) {

@@ -28,37 +28,37 @@ public class MenuController extends Controller {
         ((MenuView) view).updateView(menus); // view nesnesini MenuView'e cast ederek kullanıyoruz
     }
 
-    public void placeOrder(int menuIndex) {
-        List<MenuModel> menus = model.getMenus(connection);
-        if (menuIndex >= 0 && menuIndex < menus.size()) {
-            MenuModel selectedMenu = menus.get(menuIndex);
+    // public void placeOrder(int menuIndex) {
+    //     List<MenuModel> menus = model.getMenus(connection);
+    //     if (menuIndex >= 0 && menuIndex < menus.size()) {
+    //         MenuModel selectedMenu = menus.get(menuIndex);
 
-            // Yeni bir Order nesnesi oluşturuluyor
-            Order order = new Order(0, 0, selectedMenu.getMenuID(), "ordered"); //ordered in database?
-            //0 for orderID, 0 for reservationID, 
-            //database will auto increment orderID, reservationID
+    //         // Yeni bir Order nesnesi oluşturuluyor
+    //         Order order = new Order(0, 0, selectedMenu.getMenuID(), "ordered"); //ordered in database?
+    //         //0 for orderID, 0 for reservationID, 
+    //         //database will auto increment orderID, reservationID
 
-            // OrderController kullanılarak sipariş veritabanına ekleniyor
-            OrderController orderController = new OrderController(connection);
-            boolean isAdded = orderController.addOrder(order,connection); //2 input
-            //Check if the order was added successfully
-            if (isAdded) {
-                System.out.println("Order added to database: Menu ID = " + order.getMenuID() + ", Status = " + order.getStatus());
-                JOptionPane.showMessageDialog(((MenuView) view).getFrame(),
-                        "Order placed for: " + selectedMenu.getName(),
-                        "Order Success",
-                        JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(((MenuView) view).getFrame(),
-                        "Failed to add order to database.",
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE);
-            }
-        } else {
-            JOptionPane.showMessageDialog(((MenuView) view).getFrame(),
-                    "Invalid menu selection.",
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
-        }
-    }
+    //         // OrderController kullanılarak sipariş veritabanına ekleniyor
+    //         OrderController orderController = new OrderController(connection);
+    //         boolean isAdded = orderController.addOrder(order,connection); //2 input
+    //         //Check if the order was added successfully
+    //         if (isAdded) {
+    //             System.out.println("Order added to database: Menu ID = " + order.getMenuID() + ", Status = " + order.getStatus());
+    //             JOptionPane.showMessageDialog(((MenuView) view).getFrame(),
+    //                     "Order placed for: " + selectedMenu.getName(),
+    //                     "Order Success",
+    //                     JOptionPane.INFORMATION_MESSAGE);
+    //         } else {
+    //             JOptionPane.showMessageDialog(((MenuView) view).getFrame(),
+    //                     "Failed to add order to database.",
+    //                     "Error",
+    //                     JOptionPane.ERROR_MESSAGE);
+    //         }
+    //     } else {
+    //         JOptionPane.showMessageDialog(((MenuView) view).getFrame(),
+    //                 "Invalid menu selection.",
+    //                 "Error",
+    //                 JOptionPane.ERROR_MESSAGE);
+    //     }
+    // }
 }
