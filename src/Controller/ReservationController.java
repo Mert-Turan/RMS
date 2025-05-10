@@ -4,6 +4,9 @@ import Model.ReservationModel;
 import Model.User;
 import View.LoginView;
 import View.ReservationView;
+import View.MenuView;
+import Model.MenuModel;
+import Controller.MenuController;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -103,7 +106,34 @@ public class ReservationController extends Controller implements ControllerInter
                 JOptionPane.showMessageDialog(null, message.toString(), "Your Reservations", JOptionPane.INFORMATION_MESSAGE);
             }
         });
+
+
+        ((ReservationView) view).getSeeMenuButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String password = loggedInUser.getUserPassword();
+                List<String[]> reservations = model.viewMyReservations(password, conn);
+
+                if (reservations.isEmpty()) {
+                    view.updateView("You must have at least one reservation to view the menu.");
+                    return;
+                }
+
+                int latestReservationID = Integer.parseInt(reservations.get(reservations.size() - 1)[0]);
+
+                MenuView menuView = new MenuView(latestReservationID);
+                MenuModel menuModel = new MenuModel(0, "", 0);
+                MenuController menuController = new MenuController(menuView, menuModel, conn);
+                menuView.setController(menuController);
+
+                List<MenuModel> menus = menuModel.getMenus(conn);
+                menuView.updateView(menus);
+                menuView.show();
+            }
+        });
     }
+
+
 
     @Override
     public void handleLogin(String fullName, String password, String role) {

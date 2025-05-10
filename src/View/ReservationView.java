@@ -10,6 +10,7 @@ public class ReservationView extends View implements ViewInterface {
     private final JComboBox<String> tableSlotComboBox;
     private final JButton reserveButton;
     private final JButton viewReservationsButton;
+    private final JButton seeMenuButton;
 
 
     public ReservationView() {
@@ -24,13 +25,14 @@ public class ReservationView extends View implements ViewInterface {
         tableSlotComboBox = new JComboBox<>();
         reserveButton = new JButton("Reserve");
         viewReservationsButton = new JButton("View My Reservations");
-
+        seeMenuButton = new JButton("See Menu");
         panel.add(new JLabel("Select Table & Time Slot:"));
         panel.add(tableSlotComboBox);
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(reserveButton);
         buttonPanel.add(viewReservationsButton);
+        buttonPanel.add(seeMenuButton);
         frame.add(buttonPanel, BorderLayout.SOUTH);
         frame.add(panel, BorderLayout.CENTER);
 
@@ -42,6 +44,10 @@ public class ReservationView extends View implements ViewInterface {
 
     public JButton getReserveButton() {
         return reserveButton;
+    }
+
+    public JButton getSeeMenuButton() {
+        return seeMenuButton;
     }
 
     // === ViewInterface Methods ===
