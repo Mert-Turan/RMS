@@ -28,6 +28,25 @@ public class MenuController extends Controller {
         ((MenuView) view).updateView(menus); // view nesnesini MenuView'e cast ederek kullanıyoruz
     }
 
+    public void updateReservation(int reservationID, int menuID) {
+        // Call the model to update the reservation in the database
+        boolean isUpdated = model.updateMenuForReservation(reservationID, menuID, connection);
+
+        // Check is it updated successfully
+        // and show a message to the user
+        if (isUpdated) {
+            JOptionPane.showMessageDialog(((MenuView) view).getFrame(),
+                    "Reservation updated successfully.",
+                    "Update Success",
+                    JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(((MenuView) view).getFrame(),
+                    "Failed to update reservation.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
     // public void placeOrder(int menuIndex) {
     //     List<MenuModel> menus = model.getMenus(connection);
     //     if (menuIndex >= 0 && menuIndex < menus.size()) {

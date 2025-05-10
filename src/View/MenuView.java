@@ -17,7 +17,7 @@ public class MenuView extends View implements ViewInterface {
     private final DefaultListModel<String> menuListModel;
     private JList<String> menuList;
 
-    public MenuView() {
+    public MenuView(reservationID) {
         frame = new JFrame("Menu Management");
         frame.setSize(600, 400);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -27,13 +27,13 @@ public class MenuView extends View implements ViewInterface {
         mainPanel = new JPanel(cardLayout);
 
         menuListModel = new DefaultListModel<>();
-        setupMenuScreen();
+        setupMenuScreen(reservationID);
 
         frame.add(mainPanel);
         frame.setVisible(true);
     }
 
-    private void setupMenuScreen() {
+    private void setupMenuScreen(reservationID) {
         JPanel panel = new JPanel(new BorderLayout());
 
         JLabel title = new JLabel("Menu List", SwingConstants.CENTER);
@@ -44,7 +44,7 @@ public class MenuView extends View implements ViewInterface {
         JScrollPane scrollPane = new JScrollPane(menuList);
         panel.add(scrollPane, BorderLayout.CENTER);
 
-        JButton orderButton = new JButton("Order");
+        JButton orderButton = new JButton("Update Reservation");
         JButton backButton = new JButton("Back");
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
@@ -57,7 +57,7 @@ public class MenuView extends View implements ViewInterface {
         orderButton.addActionListener(e -> {
             int selectedIndex = menuList.getSelectedIndex();
             if (selectedIndex != -1 && controller instanceof MenuController menuController) {
-                menuController.placeOrder(selectedIndex);
+                menuController.updateReservation(reservationID,selectedIndex); //for auto gen. order
             } else {
                 JOptionPane.showMessageDialog(frame, "Please select a menu item to order.", "Error", JOptionPane.ERROR_MESSAGE);
             }
